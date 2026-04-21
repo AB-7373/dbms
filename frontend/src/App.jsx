@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Landing from './pages/Landing';
 import Auth from './pages/Auth';
 import Library from './pages/Library';
+import MyMedia from './pages/MyMedia';
 import Upload from './pages/Upload';
 import ClaimCopyright from './pages/ClaimCopyright';
 import Profile from './pages/Profile';
@@ -19,6 +20,7 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/library" element={<Library />} />
         <Route path="/stream" element={<Navigate to="/library" replace />} />
+        <Route path="/myMedia" element={<MyMedia />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/claim" element={<ClaimCopyright />} />
         <Route path="/settings" element={<Profile />} />

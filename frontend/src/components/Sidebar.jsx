@@ -7,13 +7,16 @@ import {
   UploadCloud, 
   ShieldCheck, 
   Settings,
-  ChevronRight
+  ChevronRight,
+  Film // Imported Film icon for My Media
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import streamboatIcon from '../assets/streamboat.svg';
 
+// Added My Media to navItems
 const navItems = [
   { icon: Library, label: 'Library', path: '/library' },
+  { icon: Film, label: 'My Media', path: '/myMedia' }, 
   { icon: UploadCloud, label: 'Upload', path: '/upload' },
   { icon: ShieldCheck, label: 'Secure Vault', path: '/claim' },
 ];
