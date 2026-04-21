@@ -47,7 +47,7 @@ export default function Auth() {
             <span className="gradient-primary text-gradient">Quality.</span>
           </h1>
           <p className="text-lg text-sb-text-muted leading-relaxed">
-            Enter the secure vault. Experience premium streaming backed by enterprise-grade anti-piracy architecture.
+            Experience premium streaming backed by enterprise-grade anti-piracy architecture.
           </p>
         </div>
       </div>
@@ -56,8 +56,8 @@ export default function Auth() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-16">
-            <img src={streamboatIcon} alt="Logo" className="w-8 h-8" />
+          <div className="flex items-center gap-3 mb-8">
+            <img src={streamboatIcon} alt="Logo" className="w-16 h-16" />
             <span className="font-bold text-2xl tracking-tight">Streamboat</span>
           </div>
 
@@ -67,10 +67,10 @@ export default function Auth() {
             transition={{ duration: 0.4 }}
           >
             <h2 className="text-3xl font-extrabold mb-2 tracking-tight">
-              {isSignUp ? 'Request Clearance' : 'Secure Vault Access'}
+              {isSignUp ? 'Create an Account' : 'Welcome Back'}
             </h2>
             <p className="text-sm text-sb-text-muted mb-8">
-              {isSignUp ? 'Initialize a new dossier to access the secure network.' : 'Authenticate identity to continue to your dashboard.'}
+              {isSignUp ? 'Enter your details below to create your account.' : 'Enter your credentials to access your account.'}
             </p>
 
             <div className="flex gap-4 mb-8">
@@ -82,14 +82,14 @@ export default function Auth() {
 
             <div className="flex items-center gap-4 mb-8">
               <div className="flex-1 h-px bg-sb-border"></div>
-              <span className="text-[10px] uppercase tracking-widest text-sb-text-muted font-bold">System Override / Manual Entry</span>
+              <span className="text-[10px] uppercase tracking-widest text-sb-text-muted font-bold">Or continue with email</span>
               <div className="flex-1 h-px bg-sb-border"></div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-[10px] uppercase tracking-widest text-sb-text-muted font-bold mb-2">
-                  Operative Identifier
+                  Email Address
                 </label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-sb-text-muted" />
@@ -98,7 +98,7 @@ export default function Auth() {
                     required
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    placeholder="email@streamboat.io"
+                    placeholder="email@example.com"
                     className="w-full bg-sb-surface border border-sb-border rounded-lg py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-sb-primary transition-colors text-sb-text placeholder:text-sb-text-muted"
                   />
                 </div>
@@ -107,11 +107,11 @@ export default function Auth() {
               <div>
                 <div className="flex justify-between mb-2">
                   <label className="block text-[10px] uppercase tracking-widest text-sb-text-muted font-bold">
-                    Access Key
+                    Password
                   </label>
                   {!isSignUp && (
                     <a href="#" className="text-[10px] font-bold text-sb-primary hover:underline">
-                      Forgot Key?
+                      Forgot Password?
                     </a>
                   )}
                 </div>
@@ -132,15 +132,15 @@ export default function Auth() {
                 type="submit"
                 className="w-full bg-gradient-to-r from-sb-primary to-[#00f2fe] text-black font-bold py-3.5 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-opacity mt-4"
               >
-                {isSignUp ? 'Establish Connection' : 'Initialize Session'} <ArrowRight className="w-4 h-4" />
+                {isSignUp ? 'Sign Up' : 'Log In'} <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
             <div className="mt-8 text-center text-sm text-sb-text-muted">
               {isSignUp ? (
-                <>Active dossier found? <Link to="/login" className="text-sb-purple font-bold hover:underline">Initialize Session</Link></>
+                <>Already have an account? <Link to="/login" className="text-sb-purple font-bold hover:underline">Log In</Link></>
               ) : (
-                <>No active dossier? <Link to="/signup" className="text-sb-purple font-bold hover:underline">Request Clearance</Link></>
+                <>Don't have an account? <Link to="/signup" className="text-sb-purple font-bold hover:underline">Sign Up</Link></>
               )}
             </div>
           </motion.div>

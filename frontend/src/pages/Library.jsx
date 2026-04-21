@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileVideo, FileImage, FileText, Package } from 'lucide-react';
 import AssetCard from '../components/AssetCard';
+import streamboatIcon from '../assets/streamboat.svg';
 
 const MOCK_ASSETS = [
   {
@@ -110,6 +111,18 @@ export default function Library() {
           </motion.div>
         ))}
       </motion.div>
+
+      {/* Footer / Info */}
+      <footer className="h-20 w-full max-w-[1400px] mx-auto border-t border-sb-border/50 flex items-center justify-between px-8 md:px-16 text-xs text-sb-text-muted z-10">
+        <div className="flex items-center gap-4">
+          <img src={streamboatIcon} alt="Logo" className="w-8 h-8 opacity-50" />
+          <span>© 2026 Streamboat. ALL RIGHTS RESERVED.</span>
+        </div>
+        <div className="flex gap-6 hidden md:flex">
+          <a href="#" className="hover:text-sb-text transition-colors uppercase tracking-wider">Privacy Policy</a>
+          <a href="#" className="hover:text-sb-text transition-colors uppercase tracking-wider">Terms of Service</a>
+        </div>
+      </footer>
     </div>
   );
 }

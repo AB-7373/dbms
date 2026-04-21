@@ -13,7 +13,6 @@ import { cn } from '../lib/utils';
 import streamboatIcon from '../assets/streamboat.svg';
 
 const navItems = [
-  { icon: Play, label: 'Stream', path: '/stream' },
   { icon: Library, label: 'Library', path: '/library' },
   { icon: UploadCloud, label: 'Upload', path: '/upload' },
   { icon: ShieldCheck, label: 'Secure Vault', path: '/claim' },
@@ -33,7 +32,7 @@ export default function Sidebar() {
     >
       {/* Logo Area */}
       <div className="h-20 flex items-center px-6 border-b border-transparent shrink-0 mt-4">
-        <img src={streamboatIcon} alt="Logo" className="w-8 h-8 shrink-0" />
+        <img src={streamboatIcon} alt="Logo" className="w-16 h-16 shrink-0" />
         <div
           className={cn(
             "ml-3 font-bold text-lg tracking-tight transition-opacity duration-300 overflow-hidden whitespace-nowrap",
@@ -111,27 +110,6 @@ export default function Sidebar() {
             Settings
           </span>
         </NavLink>
-
-        <div className={cn("transition-all duration-300 overflow-hidden", isHovered ? "opacity-100 h-10" : "opacity-0 h-0")}>
-          <button className="w-full bg-gradient-to-r from-sb-primary to-[#00f2fe] text-black font-semibold text-sm py-2 rounded-xl hover:opacity-90 transition-opacity">
-            Upgrade to Pro
-          </button>
-        </div>
-
-        <div className="flex items-center p-2 rounded-xl bg-sb-surface-hover/50 border border-sb-border/50">
-          <div className="w-8 h-8 rounded-full bg-sb-border shrink-0 flex items-center justify-center overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100&h=100" alt="Avatar" className="w-full h-full object-cover" />
-          </div>
-          <div
-            className={cn(
-              "ml-3 flex flex-col transition-all duration-300 whitespace-nowrap overflow-hidden",
-              isHovered ? "opacity-100" : "opacity-0 w-0"
-            )}
-          >
-            <span className="text-xs font-semibold">Sentinel 01</span>
-            <span className="text-[10px] text-sb-primary">Active Link</span>
-          </div>
-        </div>
       </div>
     </motion.div>
   );

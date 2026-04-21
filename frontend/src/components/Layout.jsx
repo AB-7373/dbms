@@ -4,13 +4,15 @@ import TopBar from './TopBar';
 
 export default function Layout() {
   return (
-    <div className="flex min-h-screen bg-sb-bg text-sb-text overflow-hidden">
+    <div className="flex h-screen bg-sb-bg text-sb-text overflow-hidden">
+      
       <Sidebar />
-      <div className="flex-1 ml-20 md:ml-20 flex flex-col transition-all duration-300 relative h-screen overflow-hidden">
-        <div className="flex-1 w-full flex flex-col">
-          <TopBar />
+      <div className="flex-1 ml-20 md:ml-20 flex flex-col transition-all duration-300 relative h-full">
+        <TopBar />
+        
+        <main className="flex-1 w-full overflow-y-auto flex flex-col relative">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );
