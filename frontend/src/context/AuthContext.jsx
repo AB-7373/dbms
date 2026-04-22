@@ -27,6 +27,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const { data } = await axiosInstance.post('/auth/login', { email, password });
+      
+      // Check if email needs verification
+      if (data.requiresOTPVerification) {
+        toast.error(data.message);
+        return { success: false, requiresOTPVerification: true, email: data.email };
+      }
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify({
         _id: data._id,
@@ -38,16 +45,38 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       toast.success('Logged in successfully');
       navigate('/library');
-      return true;
+      return { success: true };
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Login failed');
-      return false;
+      const errorMsg = error.response?.data?.message || 'Login failed';
+      
+      // Check if it's a Google auth error
+      if (error.response?.data?.authMethod === 'google') {
+        toast.error(errorMsg);
+        return { success: false, authMethod: 'google' };
+      }
+      
+      toast.error(errorMsg);
+      return { success: false };
     }
   };
 
   const register = async (userData) => {
     try {
       const { data } = await axiosInstance.post('/auth/signup', userData);
+      
+      // Don't auto-login, prompt for OTP verification
+      toast.success(data.message || 'Account created. Check your email for OTP.');
+      return { success: true, requiresOTPVerification: true, email: data.email };
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Registration failed');
+      return { success: false };
+    }
+  };
+
+  const verifyOTP = async (email, otp) => {
+    try {
+      const { data } = await axiosInstance.post('/auth/verify-otp', { email, otp });
+      
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify({
         _id: data._id,
@@ -57,12 +86,23 @@ export const AuthProvider = ({ children }) => {
         profileImage: data.profileImage,
       }));
       setUser(data);
-      toast.success('Account created successfully');
+      toast.success('Email verified successfully');
       navigate('/library');
-      return true;
+      return { success: true };
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Registration failed');
-      return false;
+      toast.error(error.response?.data?.message || 'OTP verification failed');
+      return { success: false };
+    }
+  };
+
+  const resendOTP = async (email) => {
+    try {
+      const { data } = await axiosInstance.post('/auth/resend-otp', { email });
+      toast.success(data.message || 'OTP resent to your email');
+      return { success: true };
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to resend OTP');
+      return { success: false };
     }
   };
 
@@ -96,7 +136,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, googleLogin, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, googleLogin, logout, loading, verifyOTP, resendOTP }}>
       {!loading && children}
     </AuthContext.Provider>
   );
