@@ -6,7 +6,7 @@ import streamboatIcon from '../assets/streamboat.svg';
 import axiosInstance from '../lib/axiosInstance';
 import toast from 'react-hot-toast';
 
-const TABS = ['All Assets', 'Video', 'Image', 'Document', 'Package'];
+const TABS = ['All Assets', 'Video', 'Image', 'Document'];
 
 export default function Library() {
   const [activeTab, setActiveTab] = useState('All Assets');
