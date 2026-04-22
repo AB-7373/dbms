@@ -14,6 +14,9 @@ import Upload from './pages/Upload';
 import ClaimCopyright from './pages/ClaimCopyright';
 import Profile from './pages/Profile';
 import MediaDisplay from './pages/MediaDisplay';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import TechDetails from './pages/TechDetails';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -47,6 +50,9 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/signup" element={<Auth />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/tech" element={<TechDetails />} />
 
           {/* Protected Routes (wrapped in Layout) */}
           <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
