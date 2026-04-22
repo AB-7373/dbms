@@ -48,6 +48,19 @@ const userSchema = new mongoose.Schema({
   googleId: {
     type: String,
     default: null,
+  },
+  otp: {
+    type: String,
+    default: null,
+  },
+  otp_expires: {
+    type: Date,
+    default: null,
+  },
+  authMethod: {
+    type: String,
+    enum: ['email', 'google'],
+    default: 'email',
   }
 }, { timestamps: true });
 

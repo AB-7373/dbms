@@ -20,6 +20,15 @@ export default function Landing() {
     }
   };
 
+  const handleGetStarted = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/library');
+    } else {
+      navigate('/signup');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-sb-bg text-sb-text flex flex-col relative overflow-hidden">
       {/* Background Effects */}
@@ -40,7 +49,7 @@ export default function Landing() {
             Sign In
           </button>
           <button 
-            onClick={() => navigate('/signup')}
+            onClick={handleGetStarted}
             className="bg-sb-surface border border-sb-border hover:border-sb-primary px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:shadow-[0_0_20px_rgba(0,229,255,0.2)]"
           >
             Get Started
@@ -89,7 +98,7 @@ export default function Landing() {
             className="flex flex-col sm:flex-row items-center gap-4"
           >
             <button 
-              onClick={() => navigate('/signup')}
+              onClick={handleGetStarted}
               className="w-full sm:w-auto bg-gradient-to-r from-sb-primary to-[#00f2fe] text-black px-8 py-4 rounded-full font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-[0_0_30px_rgba(0,229,255,0.3)] hover:scale-105 transform duration-200"
             >
               <Play className="w-5 h-5 fill-black" />
