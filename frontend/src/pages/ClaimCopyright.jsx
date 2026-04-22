@@ -241,16 +241,13 @@ export default function ClaimCopyright() {
                             </div>
                           </div>
 
-                          {/* Match Score & Report Button */}
-                          <div className="flex flex-col items-end border-l border-white/10 pl-6 shrink-0 min-w-[100px]">
-                            <div className="text-2xl text-sb-purple font-black">{match.similarity}%</div>
-                            <div className="text-[10px] uppercase tracking-widest text-sb-text-muted mt-1 mb-3">Match Score</div>
-                            
+                          {/* REPORT BUTTON & MATCH SCORE (Horizontal Layout) */}
+                          <div className="flex items-center gap-6 border-l border-white/10 pl-6 shrink-0">
                             <button
                                onClick={() => handleReportMatch(match, idx)}
                                disabled={isReported}
                                className={cn(
-                                 "flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wider transition-all w-full",
+                                 "flex items-center justify-center gap-1.5 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-wider transition-all",
                                  isReported 
                                    ? "bg-green-500/10 text-green-500 border border-green-500/20 cursor-not-allowed"
                                    : "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20"
@@ -266,7 +263,13 @@ export default function ClaimCopyright() {
                                 </>
                               )}
                             </button>
+
+                            <div className="flex flex-col items-end min-w-[70px]">
+                              <div className="text-2xl text-sb-purple font-black">{match.similarity}%</div>
+                              <div className="text-[10px] uppercase tracking-widest text-sb-text-muted mt-1">Match Score</div>
+                            </div>
                           </div>
+                          
                         </div>
                       );
                     })}
