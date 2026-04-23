@@ -99,10 +99,6 @@ export default function Profile() {
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-bold mb-1">{profile.firstName} {profile.lastName}</h2>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs text-sb-primary tracking-widest uppercase font-bold">{profile.subscription_plan} Plan</span>
-              <CheckCircle2 className="w-3 h-3 text-sb-primary" />
-            </div>
             <div className="text-sm text-sb-text-muted">{profile.email}</div>
           </div>
           <button className="w-full sm:w-auto px-6 py-2.5 bg-white text-black rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors mt-4 sm:mt-0">
@@ -126,13 +122,13 @@ export default function Profile() {
             </div>
             <div className="md:col-span-2">
               <label className="block text-xs uppercase tracking-widest text-sb-text-muted font-bold mb-2">Email Address</label>
-              <input value={email} onChange={e=>setEmail(e.target.value)} type="email" className="w-full bg-[#0A0A0A] border border-sb-border rounded-lg py-3 px-4 text-sm focus:outline-none focus:border-sb-primary text-white" />
+              <input value={email} disabled onChange={e=>setEmail(e.target.value)} type="email" className="w-full bg-[#0A0A0A] border border-sb-border rounded-lg py-3 px-4 text-sm focus:outline-none focus:border-sb-primary text-[#ffffff55]" />
             </div>
             <div className="md:col-span-2 flex justify-end mt-2">
               <button 
                  onClick={handleUpdateProfile}
                  disabled={isSaving}
-                 className="px-6 py-2.5 bg-sb-primary/10 text-sb-primary border border-sb-primary/20 hover:bg-sb-primary/20 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
+                 className="px-6 py-2.5 bg-white text-black border border-white hover:bg-white/90 rounded-lg text-sm font-bold transition-colors disabled:opacity-50"
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
               </button>
