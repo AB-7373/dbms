@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FileVideo, FileImage, FileText, Package } from 'lucide-react';
 import AssetCard from '../components/AssetCard';
@@ -11,6 +11,9 @@ const TABS = ['All Assets', 'Video', 'Image', 'Document'];
 
 export default function Library() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q');
+  
   const [activeTab, setActiveTab] = useState('All Assets');
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,12 +22,17 @@ export default function Library() {
     const fetchAssets = async () => {
       setIsLoading(true);
       try {
-        let url = '/assets';
-        if (activeTab !== 'All Assets') {
-          url += `?type=${activeTab.toLowerCase()}`;
+        if (searchQuery) {
+          const { data } = await axiosInstance.get(`/assets/search?query=${searchQuery}`);
+          setAssets(data.assets);
+        } else {
+          let url = '/assets';
+          if (activeTab !== 'All Assets') {
+            url += `?type=${activeTab.toLowerCase()}`;
+          }
+          const { data } = await axiosInstance.get(url);
+          setAssets(data.assets);
         }
-        const { data } = await axiosInstance.get(url);
-        setAssets(data.assets);
       } catch (error) {
         toast.error('Failed to load library assets');
       } finally {
@@ -32,7 +40,7 @@ export default function Library() {
       }
     };
     fetchAssets();
-  }, [activeTab]);
+  }, [activeTab, searchQuery]);
 
   const handleAssetClick = (asset) => {
     navigate(`/media/${asset._id}`);
@@ -51,7 +59,6 @@ export default function Library() {
   const getThumbnailUrl = (asset) => {
     if (asset.thumbnailUrl) return asset.thumbnailUrl;
     
-    // Generate thumbnail URL from fileUrl
     const urlParts = asset.fileUrl.split('/upload/');
     if (urlParts.length === 2) {
       const publicIdWithExt = urlParts[1];
@@ -82,24 +89,27 @@ export default function Library() {
   return (
     <div className="flex-1 p-8 overflow-y-auto">
       <div className="mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-6">Library</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight mb-6">
+          {searchQuery ? `Search Results for "${searchQuery}"` : 'Library'}
+        </h1>
         
-        {/* Filters */}
-        <div className="flex flex-wrap gap-3">
-          {TABS.map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-                activeTab === tab 
-                  ? 'bg-sb-primary text-black' 
-                  : 'bg-sb-surface border border-sb-border text-sb-text-muted hover:text-sb-text hover:border-sb-primary/50'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+        {!searchQuery && (
+          <div className="flex flex-wrap gap-3">
+            {TABS.map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
+                  activeTab === tab 
+                    ? 'bg-sb-primary text-black' 
+                    : 'bg-sb-surface border border-sb-border text-sb-text-muted hover:text-sb-text hover:border-sb-primary/50'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {isLoading ? (
@@ -117,7 +127,6 @@ export default function Library() {
           className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 auto-rows-[280px] gap-6 pb-12"
         >
           {assets.map((asset, index) => {
-            // Restore beautiful layout variety
             let structureClass = "md:col-span-1 md:row-span-1";
             if (index === 0) structureClass = "md:col-span-2 md:row-span-2";
             else if (index === 3) structureClass = "md:col-span-2 md:row-span-1";
@@ -150,15 +159,14 @@ export default function Library() {
         </motion.div>
       )}
 
-      {/* Footer / Info */}
       <footer className="h-20 w-full max-w-[1400px] mx-auto border-t border-sb-border/50 flex items-center justify-between px-8 md:px-16 text-xs text-sb-text-muted z-10 mt-12">
         <div className="flex items-center gap-4">
           <img src={streamboatIcon} alt="Logo" className="w-8 h-8 opacity-50" />
           <span>© 2026 Streamboat. ALL RIGHTS RESERVED.</span>
         </div>
         <div className="flex gap-6 hidden md:flex">
-          <a href="#" className="hover:text-sb-text transition-colors uppercase tracking-wider">Privacy Policy</a>
-          <a href="#" className="hover:text-sb-text transition-colors uppercase tracking-wider">Terms of Service</a>
+          <Link to="/privacy" className="hover:text-sb-text transition-colors uppercase tracking-wider">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-sb-text transition-colors uppercase tracking-wider">Terms of Service</Link>
         </div>
       </footer>
     </div>

@@ -10,31 +10,62 @@ export default function TechDetails() {
         </h1>
         <div className="space-y-8">
           <div className="bg-sb-surface border border-sb-border p-8 rounded-2xl transition-all hover:border-sb-primary">
-            <h2 className="text-2xl font-bold text-white mb-6">Frontend Layer</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Frontend & Physical Security</h2>
             <ul className="space-y-4 text-sb-text-muted">
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> react.js orchestrated with vite</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> tailwind css v4 for utility-first styling</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> react router dom for single page navigation</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> context api handling global authentication state</li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-sb-primary mt-2 shrink-0"/>
+                <div>
+                  <strong className="text-gray-300 block mb-1">React.js & Vite Build Engine</strong>
+                  high-performance client application styled with tailwind css v4. features a secure authentication flow utilizing google oauth and jwt with otp verification.
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-sb-primary mt-2 shrink-0"/>
+                <div>
+                  <strong className="text-gray-300 block mb-1">Physical Content Blocking</strong>
+                  client-side defensive posture including screenshot blackout mechanisms, context menu blocking, and hostile devtools traps to prevent raw dom inspection and content scraping.
+                </div>
+              </li>
             </ul>
           </div>
 
           <div className="bg-sb-surface border border-sb-border p-8 rounded-2xl transition-all hover:border-sb-primary">
             <h2 className="text-2xl font-bold text-white mb-6">Backend Infrastructure</h2>
             <ul className="space-y-4 text-sb-text-muted">
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> node.js runtime with express frameworks</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> mongodb for nosql document storage</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> json web tokens and bcrypt for secure auth</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> cloudinary integration for media asset delivery</li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-sb-primary mt-2 shrink-0"/>
+                <div>
+                  <strong className="text-gray-300 block mb-1">Node.js API & MongoDB</strong>
+                  express-based gateway managing collections for users, sessions, assets, claims, and reports. handles complex routing for encrypted content streams.
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-sb-primary mt-2 shrink-0"/>
+                <div>
+                  <strong className="text-gray-300 block mb-1">Cloudinary & OpenCV</strong>
+                  direct-to-cloud asset ingestion Pipeline. utilizes opencv for intermediate image processing and frame extraction before cryptographic watermarking.
+                </div>
+              </li>
             </ul>
           </div>
 
           <div className="bg-sb-surface border border-sb-border p-8 rounded-2xl transition-all hover:border-sb-primary">
-            <h2 className="text-2xl font-bold text-white mb-6">Anti-Piracy & AI Systems</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Two-Layer Violation Detection</h2>
             <ul className="space-y-4 text-sb-text-muted">
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> google gemini generating deep vector embeddings</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> pinecone database for algorithmic similarity matching</li>
-              <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-sb-primary"/> hostile devtools blocking and ui event suppression</li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-sb-primary mt-2 shrink-0"/>
+                <div>
+                  <strong className="text-gray-300 block mb-1">Layer 1: Embedding Based Similarity Checks</strong>
+                  utilizing gemini-embeddings-02 for multimodal vectorization. generates 3072-dimensional float arrays stored in a pinecone vector database to execute high-speed cosine similarity searches for derivative or modified media.
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-sb-primary mt-2 shrink-0"/>
+                <div>
+                  <strong className="text-gray-300 block mb-1">Layer 2: Encrypted User ID in Content Stream</strong>
+                  leveraging facebook's videoseal model to cryptographically embed the active session's user id directly into the pixel data of the stream, ensuring immediate identification of the source of any direct leakage.
+                </div>
+              </li>
             </ul>
           </div>
         </div>

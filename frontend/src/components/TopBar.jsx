@@ -1,5 +1,6 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { Search, Bell, History } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import streamboatIcon from '../assets/streamboat.svg';
 import { AuthContext } from './../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,9 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function TopBar({ showLinks = false }) {
   const { user, logout } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -20,10 +22,19 @@ export default function TopBar({ showLinks = false }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      if (searchTerm.trim()) {
+        navigate(`/library?q=${encodeURIComponent(searchTerm.trim())}`);
+      } else {
+        navigate('/library');
+      }
+    }
+  };
+
   return (
     <div className="h-20 w-full flex items-center justify-between px-8 bg-transparent">
       <div className="flex items-center gap-8">
-        {/* Mobile/Alternative Logo if needed, or always visible depending on layout */}
         <div className="flex items-center gap-2">
            <img src={streamboatIcon} alt="Logo" className="w-6 h-6 hidden md:block lg:hidden" />
            <span className="font-bold text-xl tracking-tight">Streamboat</span>
@@ -40,6 +51,9 @@ export default function TopBar({ showLinks = false }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sb-text-muted" />
             <input 
               type="text" 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearch}
               placeholder="Search secure vault..." 
               className="w-full bg-sb-surface border border-sb-border rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-sb-primary transition-colors text-sb-text placeholder:text-sb-text-muted"
             />
