@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Play, Pause, Lock, FileText, ArrowRight } from 'lucide-react';
 import streamboatIcon from '../assets/streamboat.svg';
 
@@ -104,9 +104,12 @@ export default function Landing() {
               <Play className="w-5 h-5 fill-black" />
               Get Started
             </button>
-            <button className="w-full sm:w-auto px-8 py-4 rounded-full font-bold border border-sb-border hover:bg-sb-surface transition-colors flex items-center justify-center">
-              View Technical Specs
-            </button>
+           <button 
+            onClick={() => navigate('/tech')}
+           className="w-full sm:w-auto px-8 py-4 rounded-full font-bold border border-sb-border hover:bg-sb-surface transition-colors flex items-center justify-center"
+            >
+            View Technical Specs
+          </button>
           </motion.div>
         </div>
       </main>
@@ -239,9 +242,9 @@ export default function Landing() {
           <img src={streamboatIcon} alt="Logo" className="w-8 h-8 opacity-50" />
           <span>© 2026 Streamboat. ALL RIGHTS RESERVED.</span>
         </div>
-        <div className="flex gap-6 hidden md:flex">
-          <a href="#" className="hover:text-sb-text transition-colors uppercase tracking-wider">Privacy Policy</a>
-          <a href="#" className="hover:text-sb-text transition-colors uppercase tracking-wider">Terms of Service</a>
+       <div className="flex gap-6 hidden md:flex">
+          <Link to="/privacy" className="hover:text-sb-text transition-colors uppercase tracking-wider">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-sb-text transition-colors uppercase tracking-wider">Terms of Service</Link>
         </div>
       </footer>
     </div>
