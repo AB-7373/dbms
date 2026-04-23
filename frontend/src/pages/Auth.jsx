@@ -134,13 +134,9 @@ export default function Auth() {
         </div>
         
         <div className="relative z-10 max-w-lg">
-          <div className="flex items-center gap-2 mb-6 text-sb-primary font-bold text-xs uppercase tracking-widest">
-            <ShieldCheck className="w-4 h-4" />
-            The Cinematic Sentinel
-          </div>
           <h1 className="text-6xl font-extrabold tracking-tighter leading-tight mb-4">
             Uncompromised<br/>
-            <span className="gradient-primary text-gradient">Quality.</span>
+            <span className="text-[#9b51f0]">Quality.</span>
           </h1>
           <p className="text-lg text-sb-text-muted leading-relaxed">
             Experience premium streaming backed by enterprise-grade anti-piracy architecture.

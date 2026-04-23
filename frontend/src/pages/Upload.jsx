@@ -152,7 +152,7 @@ export default function Upload() {
             SUPPORTED FORMATS: .mp4, .png, .jpg, .jpeg, .pdf
           </div>
           <div className="absolute bottom-6 right-6 text-[10px] text-sb-primary font-bold tracking-wider uppercase flex items-center gap-1">
-            <Check className="w-3 h-3" /> MAX FILE SIZE: 100MBs
+            <Check className="w-3 h-3" /> MAX FILE SIZE: 20MB
           </div>
         </div>
 
@@ -161,9 +161,9 @@ export default function Upload() {
           {/* Metadata Card */}
           <div className="bg-sb-surface rounded-2xl p-6 border border-sb-border relative overflow-hidden">
              {/* Left accent line */}
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />
+            <div className="absolute left-0 top-0 bottom-0 w-1" />
             
-            <div className="flex items-center gap-2 text-xs font-bold text-blue-500 mb-6 uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-bold text-white mb-6 uppercase tracking-wider">
               <Info className="w-4 h-4" /> FILE DETAILS
             </div>
 
@@ -194,9 +194,9 @@ export default function Upload() {
           {/* Security & Settings Card */}
           <div className="bg-sb-surface rounded-2xl p-6 border border-sb-border relative overflow-hidden">
             {/* Left accent line */}
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-sb-purple" />
+            <div className="absolute left-0 top-0 bottom-0 w-1" />
             
-            <div className="flex items-center gap-2 text-xs font-bold text-sb-purple mb-6 uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-bold text-white mb-6 uppercase tracking-wider">
               <Shield className="w-4 h-4" /> SECURITY & VISIBILITY
             </div>
 

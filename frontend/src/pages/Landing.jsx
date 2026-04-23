@@ -60,16 +60,6 @@ export default function Landing() {
       {/* Hero Section */}
       <main className="flex-1 flex items-center w-full max-w-[1400px] mx-auto px-8 md:px-16 lg:px-24 z-10 py-20">
         <div className="max-w-3xl">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-2 mb-6"
-          >
-            <div className="w-2 h-2 rounded-full bg-sb-primary animate-pulse" />
-            <span className="text-xs font-bold tracking-widest text-sb-primary uppercase">Encrypted Transmission</span>
-          </motion.div>
-
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -78,7 +68,7 @@ export default function Landing() {
           >
             Uncompromised<br/>
             Content.<br/>
-            <span className="gradient-primary text-gradient">Absolute Security.</span>
+            <span className="text-[#6845e6]">Absolute Security.</span>
           </motion.h1>
 
           <motion.p 
@@ -186,17 +176,6 @@ export default function Landing() {
             <p className="text-sm text-gray-400 mb-8 leading-relaxed">
               Access sensitive scripts, storyboards, and contracts with restricted print/download capabilities.
             </p>
-            
-            {/* Fake Document UI */}
-            <div className="mt-auto bg-[#141414] border border-white/5 p-4 rounded-xl flex items-center gap-4">
-              <div className="w-10 h-10 bg-[#381B1B] rounded-lg flex items-center justify-center shrink-0">
-                 <FileText className="w-5 h-5 text-[#FF6B6B]" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-bold text-white truncate">Project_Omega_Script.pdf</div>
-                <div className="text-[10px] text-[#4D9FFF] font-semibold mt-0.5">Watermarked • View Only</div>
-              </div>
-            </div>
           </div>
 
           {/* Card 3: Encrypted Image Galleries */}
