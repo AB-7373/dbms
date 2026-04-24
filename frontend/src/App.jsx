@@ -16,6 +16,7 @@ import Profile from './pages/Profile';
 import MediaDisplay from './pages/MediaDisplay';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TechDetails from './pages/TechDetails';
+import TermsOfService from './pages/TermsOfService';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -51,6 +52,7 @@ function App() {
           <Route path="/signup" element={<Auth />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/tech" element={<TechDetails />} />
+          <Route path="/terms" element={<TermsOfService />} />
 
           {/* Protected Routes (wrapped in Layout) */}
           <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
