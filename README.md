@@ -9,6 +9,7 @@
 - [Environment Variables](#environment-variables)
 - [Installation & Setup](#installation--setup)
 - [Running the Project](#running-the-project)
+- [Docker & Container Services](#docker--container-services)
 - [Project Architecture](#project-architecture)
 - [Key Components](#key-components)
 - [API Documentation](#api-documentation)
@@ -33,14 +34,22 @@ The application provides seamless integration between media management, copyrigh
 
 ## Tech Stack
 
+### Infrastructure & Deployment
+
+- **Containerization:** Docker - Container images for all services
+- **Orchestration:** Docker Compose - Multi-container orchestration
+- **Web Server:** NGINX (Alpine) - Reverse proxy and load balancing
+- **Caching:** Redis (Alpine) - In-memory data store for sessions and caching
+
 ### Backend
 
-- **Runtime:** Node.js (v14+)
+- **Runtime:** Node.js (v20-alpine) - Lightweight Node.js runtime
 - **Framework:** Express.js (v5.2.1) - Web server and API routing
 - **Database:** MongoDB (v9.5.0) - NoSQL document database
 - **ODM:** Mongoose (v9.5.0) - MongoDB object modeling
 - **Authentication:** JWT (jsonwebtoken v9.0.3) - Token-based auth
 - **Encryption:** bcryptjs (v3.0.3) - Password hashing
+- **Session Store:** Redis - Session persistence and caching
 
 ### AI & Machine Learning
 
@@ -296,6 +305,11 @@ NODE_ENV=development
 # Database
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>
 
+# Redis Cache & Sessions
+REDIS_URL=redis://redis_cache:6379
+REDIS_HOST=redis_cache
+REDIS_PORT=6379
+
 # JWT
 JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRE=7d
@@ -326,6 +340,11 @@ SMTP_FROM=noreply@streamboat.com
 FRONTEND_URL=http://localhost:5173
 ```
 
+**Redis Configuration Notes:**
+- In Docker: Use `redis://redis_cache:6379` (service name)
+- Locally: Use `redis://localhost:6379`
+- For production, add Redis authentication with password
+
 ### Frontend Configuration
 
 Create a `.env` file in the `frontend/` directory:
@@ -354,20 +373,129 @@ CUDA_VISIBLE_DEVICES=0
 VIDEO_SEAL_PORT=8000
 ```
 
+### NGINX Configuration
+
+The NGINX reverse proxy configuration is managed in [nginx/nginx.conf](nginx/nginx.conf).
+
+**Key responsibilities:**
+- Routes `/api/*` requests to backend service (port 5000)
+- Serves frontend static files
+- Handles CORS headers
+- Load balancing (configurable)
+- SSL/TLS termination (in production)
+
+**Default configuration:**
+```nginx
+upstream backend {
+  server node_backend:5000;
+}
+
+server {
+  listen 80;
+  
+  location /api {
+    proxy_pass http://backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+  
+  location / {
+    # Frontend serving
+    root /usr/share/nginx/html;
+    try_files $uri $uri/ /index.html;
+  }
+}
+```
+
+**To modify NGINX configuration in production:**
+1. Edit `nginx/nginx.conf`
+2. Rebuild NGINX container: `docker compose up -d --build nginx`
+3. No restart needed for config-only changes with `--build`
+
+### Redis Cache & Sessions
+
+Redis is used for session management, caching, and rate limiting in the backend.
+
+**Usage in Backend:**
+```javascript
+// Session storage
+const session = require('express-session');
+const RedisStore = require('connect-redis').default;
+const redis = require('redis');
+
+const redisClient = redis.createClient({
+  url: process.env.REDIS_URL
+});
+
+session({
+  store: new RedisStore({ client: redisClient }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+});
+```
+
+**Common use cases:**
+- User session persistence
+- JWT token caching
+- Rate limiting counters
+- OTP storage
+- Temporary file references
+- Real-time data structures
+
+**Redis Commands (for debugging):**
+```bash
+# Connect to Redis in Docker
+docker exec -it redis_cache redis-cli
+
+# View all keys
+KEYS *
+
+# Get session info
+GET <key>
+
+# Clear all data
+FLUSHALL
+
+# Check memory usage
+INFO memory
+```
+
+**Configuration in Docker:**
+- No authentication by default (internal network)
+- Runs in memory (data lost on restart)
+- For persistence, mount volume: `volumes: - redis-data:/data`
+- For password protection, add to `docker-compose.yml`:
+  ```yaml
+  redis:
+    command: redis-server --requirepass your_password
+  ```
+
 ---
 
 ## Installation & Setup
 
 ### Prerequisites
 
-- **Node.js** (v14 or higher) for backend
+**For Docker-based setup:**
+- **Docker** (v20.10+) - Container engine
+- **Docker Compose** (v1.29+) - Multi-container orchestration
+- **Git** for version control
+
+**For local development (without Docker):**
+- **Node.js** (v20 or higher) for backend
 - **Python** (v3.10+) for video watermarking
 - **MongoDB** (local or Atlas cloud)
+- **Redis** (optional, for session management)
 - **npm** or **yarn** package manager
 - **Git** for version control
+
+**External Services:**
 - **Cloudinary Account** for media hosting
 - **Google Cloud Console** for OAuth and Gemini API
 - **Pinecone Account** for vector embeddings
+- **MongoDB Atlas Account** (or local MongoDB)
+- **SMTP Server** (Gmail, SendGrid, etc.) for email
 
 ### Step 1: Clone the Repository
 
@@ -442,25 +570,81 @@ python watermark_service.py
 
 ## Running the Project
 
-### Development Environment
+### Docker Compose (Recommended for Development & Production)
+
+The entire application can be run using Docker Compose with all services containerized:
+
+**Prerequisites:**
+- Docker installed
+- Docker Compose installed
+- Environment files created (see [Environment Variables](#environment-variables))
+
+**Services included:**
+- `backend` - Node.js API server (port 5000)
+- `nginx` - Reverse proxy & load balancer (port 80)
+- `watermark` - VideoSeal watermarking service (port 8000)
+- `redis` - In-memory cache & session store (port 6379)
+
+**Start all services:**
+```bash
+# Navigate to project root
+cd streamboat
+
+# Create environment files
+cp backend/.env.example backend/.env
+cp video-seal/.env.example video-seal/.env
+
+# Start all containers in the background
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop all containers
+docker compose down
+
+# Stop and remove volumes
+docker compose down -v
+```
+
+**Access the application:**
+- Frontend (via NGINX): `http://localhost:80` or `http://localhost`
+- Backend API directly: `http://localhost:5000/api`
+- Video-Seal service: `http://localhost:8000`
+- Redis: `localhost:6379`
+
+**Development Environment (Without Docker)**
 
 **Terminal 1: Start Backend Server**
 ```bash
 cd backend
+npm install
 npm run dev
 ```
 
 **Terminal 2: Start Frontend Development Server**
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
 **Terminal 3: Start Video-Seal Service (Optional)**
 ```bash
 cd video-seal
+python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
 python watermark_service.py
+```
+
+**Terminal 4: Start Redis (Optional for session management)**
+```bash
+# Using Docker:
+docker run -d -p 6379:6379 redis:alpine
+
+# Or locally installed Redis:
+redis-server
 ```
 
 Access the application at `http://localhost:5173`
@@ -480,6 +664,18 @@ cd backend
 npm start
 ```
 
+**Using Docker in Production:**
+```bash
+# Build images with production tags
+docker compose -f docker-compose.yml build
+
+# Start production containers
+docker compose -f docker-compose.yml up -d
+
+# Scale backend if needed
+docker compose up -d --scale backend=3
+```
+
 ### Linting & Code Quality
 
 **Frontend:**
@@ -490,58 +686,199 @@ npm run lint
 
 ---
 
+## Docker & Container Services
+
+### Service Overview
+
+The application is designed to run as a containerized multi-service application using Docker Compose. Each service runs in its own isolated container while communicating over Docker's internal network.
+
+#### **NGINX (Reverse Proxy)**
+- **Image:** `nginx:alpine`
+- **Container Name:** `nginx_proxy`
+- **Port:** 80 (external) → 80 (internal)
+- **Purpose:**
+  - Reverse proxy for backend API requests
+  - Routes incoming requests to appropriate services
+  - Load balancing capability
+  - Static file serving (if needed)
+  - CORS handling
+- **Configuration:** [nginx/nginx.conf](nginx/nginx.conf)
+- **Access:** `http://localhost`
+
+#### **Backend API (Node.js)**
+- **Dockerfile:** [backend/dockerfile](backend/dockerfile)
+- **Base Image:** `node:20-alpine` (lightweight Node.js)
+- **Container Name:** `node_backend`
+- **Port:** 5000 (exposed internally)
+- **Purpose:**
+  - RESTful API server
+  - Request handling and routing
+  - Business logic execution
+  - Database operations via Mongoose
+  - External API integrations (Gemini, Pinecone, Cloudinary)
+- **Environment:** Loaded from `backend/.env`
+- **Dependencies:** Installed from `backend/package.json`
+
+#### **Video-Seal Service (Watermarking)**
+- **Dockerfile:** [video-seal/dockerfile](video-seal/dockerfile)
+- **Base Image:** `python:3.10-slim`
+- **Container Name:** `videoseal_worker`
+- **Port:** 8000 (exposed internally)
+- **Purpose:**
+  - Video/image watermarking
+  - Copyright protection processing
+  - AI model inference
+  - Returns watermarked media
+- **Models Supported:**
+  - VideoSeal (256-bit)
+  - PixelSeal (imperceptibility optimized)
+  - ChunkySeal (high capacity - 1024-bit)
+- **Environment:** Loaded from `video-seal/.env`
+- **GPU Support:** Optional CUDA acceleration
+
+#### **Redis (Cache & Sessions)**
+- **Image:** `redis:alpine`
+- **Container Name:** `redis_cache`
+- **Port:** 6379 (exposed internally)
+- **Purpose:**
+  - Session storage (user authentication state)
+  - Caching frequently accessed data
+  - Rate limiting counters
+  - Task queue for background jobs
+  - Real-time data structures
+- **Default:** Runs with default configuration
+- **Persistence:** Optional - can be configured for data persistence
+
+### Container Network
+
+All containers communicate over Docker's internal network bridge. Services can reference each other by container name:
+
+```
+Frontend (Browser)
+    ↓ HTTP on port 80
+[NGINX] → Routes to backend internally (node_backend:5000)
+    ↓ Internal Docker network
+[Backend Node.js] → Calls external APIs & databases
+    ├→ MongoDB (external)
+    ├→ Redis (redis_cache:6379)
+    ├→ Cloudinary (external)
+    └→ [Video-Seal Service] (videoseal_worker:8000)
+```
+
+### Docker Compose Configuration
+
+File: [docker-compose.yml](docker-compose.yml)
+
+**Key settings:**
+- `expose`: Services only accessible within Docker network
+- `ports`: External port mappings to containers
+- `volumes`: Mount configuration files as read-only
+- `depends_on`: Service startup ordering
+- `env_file`: Load environment variables from file
+- `restart: unless-stopped`: Auto-restart on failure
+
+### Dockerfile Details
+
+**Backend Dockerfile:**
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --production
+COPY . .
+EXPOSE 5000
+CMD ["npm", "start"]
+```
+
+**Video-Seal Dockerfile:**
+```dockerfile
+FROM python:3.10-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y libgl1 libglib2.0-0
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY videoseal/requirements.txt ./videoseal/
+RUN pip install --no-cache-dir -r videoseal/requirements.txt
+COPY . .
+CMD ["python", "watermark_service.py"]
+```
+
+---
+
 ## Project Architecture
 
 ### System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Client (Browser)                         │
-│  React + Vite + Tailwind CSS                                   │
-│  - Landing Page                                                 │
-│  - Auth (Login/Signup)                                         │
-│  - Library (Browse Content)                                    │
-│  - Upload (Create Content)                                     │
-│  - Copyright Claims                                            │
-└───────────────────────┬───────────────────────────────────────┘
-                        │ HTTP/REST API
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Backend API Server                           │
-│              Node.js + Express.js                              │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ Routes & Controllers                                     │  │
-│  │ - Authentication                                         │  │
-│  │ - Asset Management                                       │  │
-│  │ - Upload & Processing                                   │  │
-│  │ - Copyright Claims                                       │  │
-│  │ - User Profiles                                          │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└────────┬──────────────────────────┬──────────────────────────┘
-         │                          │
-         ▼                          ▼
-    ┌─────────┐          ┌──────────────────┐
-    │ MongoDB │          │   Cloudinary     │
-    │   DB    │          │ (Media Storage)  │
-    └─────────┘          └──────────────────┘
-         │                       │
-         │          ┌────────────┴──────────────┐
-         │          │                           │
-         ▼          ▼                           ▼
-    ┌──────────┐ ┌──────────┐  ┌────────────┐
-    │ Mongoose │ │ Pinecone │  │   Gemini   │
-    │   ODM    │ │(Embeddings)│ AI API     │
-    └──────────┘ └──────────┘  └────────────┘
-         │
-         ▼
-    ┌─────────────────────────┐
-    │  Video-Seal Service     │
-    │  (Watermarking)         │
-    │  - VideoSeal            │
-    │  - PixelSeal            │
-    │  - ChunkySeal           │
-    └─────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                      Internet/Client                             │
+│                    (Browser, Mobile App)                         │
+└────────────────────────────┬─────────────────────────────────────┘
+                             │ HTTP/HTTPS
+                             ▼
+                   ┌─────────────────────┐
+                   │  NGINX (Port 80)    │
+                   │  Reverse Proxy      │
+                   │  Load Balancer      │
+                   └────────┬────────────┘
+                            │
+            ┌───────────────┴──────────────┐
+            │                              │
+            ▼                              ▼
+   ┌──────────────────┐         ┌─────────────────────┐
+   │  Frontend (SPA)  │         │  Backend API        │
+   │  React + Vite    │         │  Node.js + Express  │
+   │  Port 5173       │         │  Port 5000          │
+   │  (Dev only)      │         │  node_backend       │
+   └──────────────────┘         └────────┬────────────┘
+                                         │
+                    ┌────────────────────┼────────────────┐
+                    │                    │                │
+                    ▼                    ▼                ▼
+            ┌─────────────┐     ┌────────────────┐   ┌──────────┐
+            │  MongoDB    │     │  Cloudinary    │   │  Redis   │
+            │  Database   │     │  Media Storage │   │  Cache   │
+            │  (External) │     │  (External)    │   │          │
+            └─────────────┘     └────────────────┘   └──────────┘
+                    │                   │                  │          
+                    └───────────────────┼──────────────────┘          
+                                        │                          
+                    ┌───────────────────┘
+                    │
+                    ▼
+            ┌──────────────────┐
+            │ Pinecone         │
+            │ (Embeddings)     │
+            │ Semantic Search  │
+            │ (External)       │
+            └──────────────────┘
+                    │
+                    ▼
+            ┌──────────────────┐
+            │  Gemini API      │
+            │  (AI Analysis)   │
+            │  (External)      │
+            └──────────────────┘
+                    │
+                    ▼
+            ┌──────────────────┐
+            │  Video-Seal      │
+            │  Watermarking    │
+            │  Service         │
+            │  Port 8000       │
+            │  videoseal_worker│
+            │  (GPU Optional)  │
+            └──────────────────┘
 ```
+
+**Service Communication:**
+- Clients connect to NGINX on port 80
+- NGINX routes to backend Node.js API (port 5000)
+- Backend uses Redis for session caching and rate limiting
+- Backend uploads/stores media via Cloudinary
+- Backend generates embeddings and sends to Pinecone
+- Backend queries Gemini AI for content analysis
+- Backend calls Video-Seal service (port 8000) for watermarking
 
 ### Data Flow
 
