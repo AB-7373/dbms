@@ -18,3 +18,12 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+  watermark:
+    build: ./video-seal
+    container_name: videoseal_worker
+    expose:
+      - "8000" 
+    env_file:
+      - video-seal/.env
+    restart: unless-stopped
